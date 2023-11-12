@@ -1,0 +1,7 @@
+# Config
+.env
+
+# Python
+venv
+__pycache__
+*.egg-info
