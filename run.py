@@ -13,12 +13,7 @@ logging.basicConfig(level=logging.INFO)
 
 
 def run(args):
-    policy = None
-
-    if args.train and args.backend == "boxes":
-        log.info("Training demons to make decisions...")
-        policy = Boxes()
-        play(args.train_episodes, policy)
+    policy = loadPolicy(args)
     
     log.info("Starting policy evaluation...")
     results = play(args.eval_episodes, policy, renderMode=args.render_mode)
@@ -59,7 +54,16 @@ def play(episodes: int, policy: Policy, renderMode: str | None = None) -> List[R
     return episodesReward  
 
 
-def parse_args():
+def loadPolicy(args):
+    if args.backend == "boxes":
+        policy = Boxes()
+        if args.train:
+            log.info("Training demons to make decisions...")
+            play(args.train_episodes, policy)
+        
+        return policy
+
+def parseArgs():
     args = argparse.ArgumentParser()
 
     args.add_argument(
@@ -86,7 +90,7 @@ def parse_args():
     args.add_argument(
         "--train_episodes",
         type=int,
-        default=250000
+        default=20000
     )
     args.add_argument(
         "--eval_episodes",
@@ -98,5 +102,5 @@ def parse_args():
 
 
 if __name__ == "__main__":
-    args = parse_args()
+    args = parseArgs()
     run(args)
