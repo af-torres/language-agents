@@ -3,7 +3,7 @@ import logging
 import numpy as np
 
 from agents.agent import CartPoleAgent, Policy
-from agents.environment import CartPole
+from agents.environment import CartPole, Reward
 from agents.policies.boxes import Boxes
 from typing import List
 
@@ -25,7 +25,7 @@ def run(args):
     eval(results)
 
 
-def eval(results: List[int]) -> None:
+def eval(results: List[Reward]) -> None:
     r = np.array(results)
     mean = np.mean(r)
     sd = np.std(r)
@@ -41,7 +41,7 @@ def eval(results: List[int]) -> None:
 + Total episodes with a duration gte 500 is {up500}.""")
 
 
-def play(episodes: int, policy: Policy, renderMode: str | None = None) -> List[int]:
+def play(episodes: int, policy: Policy, renderMode: str | None = None) -> List[Reward]:
     agent = CartPoleAgent(policy)
     env = CartPole(renderMode)
 

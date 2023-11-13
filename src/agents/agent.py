@@ -9,12 +9,11 @@ class Agent(ABC):
     def action(self, environment: Environment) -> None:
         raise NotImplementedError
     
-    @abstractmethod
-    def terminate() -> None:
+    def terminate(self) -> None:
         """
         terminate is called once the episode comes to an end
         """
-        raise NotImplementedError
+        pass
 
 
 class Policy(ABC):
@@ -22,7 +21,7 @@ class Policy(ABC):
     def execute(self, state: State) -> Action:
         raise NotImplementedError
     
-    def terminate() -> None:
+    def terminate(self) -> None:
         """
         terminate is called once the episode comes to an end
         """

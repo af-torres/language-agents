@@ -6,7 +6,7 @@ This project aims to test weather there is a statistically significant differenc
 
 Up to this point in time, we have developed a base agent called [Boxes](https://citeseerx.ist.psu.edu/document?doi=2f027193fb703d0af58ec382bd1438daff9417d7) to learn a control policy for the [Cart Pole](https://gymnasium.farama.org/environments/classic_control/cart_pole/) environment. The results of this agent are:
 
-+ Mean episode duration of 163.77
++ Mean episode duration of 163.77.
 + Standard deviation for episode duration of 105.66814609900187.
 + Longest episode with a duration of 437.0.
 + Shortest episode with a duration of 11.0.
