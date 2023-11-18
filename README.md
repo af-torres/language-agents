@@ -1,4 +1,4 @@
-# Are Language Agents powerful enough?
+# Are Language Agents powerful enough for classic control problems in RL?
 
 Large Language Models (LLM) exhibit emergent abilities in tasks like planning and decision-making akin to those of human beings, which has inspired the creation of agents that use LLM as their main controller. While many of the augmentations being added to these models today (tool usage, memory, prompting, etc.) improve the performance of language agents in various tasks, it is still unclear how well they perform in classic control environments.
 
@@ -44,7 +44,7 @@ log transformation of the reward:
 
 Our final agent uses an LLM as its controller. The main idea here is, we ask the LLM to make the decision of whether to push the cart to the right or the left. This follows a zero shot learning strategy where the only prior information given to the agent is a brief context of the problem and the current state representation. We also added to the context the previous 15 (state, decision) tuples with the idea of giving the agent a time reference.
 
-We use two prompting strategies, 1. the agent is asked to only respond with the decision, and 2. the agent to respond to the user with its thought process and the decision following the idea of CoT.
+We use two prompting strategies, 1. the agent is asked to only respond with the decision, and 2. the agent to respond to the user with its thought process and the decision following the idea of [CoT](https://arxiv.org/abs/2201.11903).
 
 The reward achieved by the agent when prompted to respond only with the decision:
 
@@ -74,7 +74,46 @@ log transformation of the reward:
 + Mean: 2.8660452369702067.
 + Standard deviation: 0.5690782998841872.
 
-## Setup
+## Experiment results
+
+H0: mean_agent_one == mean_agent_two
+Ha: mean_agent_one != mean_agent_two
+
+### LLM vs. Random
+
+P value and statistical significance:
+
+The two-tailed P value equals 0.9492
+
+Confidence interval:
+The mean of Group One minus Group Two equals -0.005009763048935856
+95% confidence interval of this difference: From -0.159862166088429650 to 0.149842639990557940
+
+Intermediate values used in calculations:
+t = 0.0638
+df = 198
+standard error of difference = 0.079
+
+### Boxes vs. Random
+
+P value and statistical significance:
+
+The two-tailed P value is less than 0.0001
+
+Confidence interval:
+The mean of Group One minus Group Two equals -1.976122374384382300
+95% confidence interval of this difference: From -2.175149470153931600 to -1.777095278614833000
+
+Intermediate values used in calculations:
+t = 19.5800
+df = 198
+standard error of difference = 0.101
+
+### Conclusion
+
+With a significance level of 5% we can conclude that LLMs are not much better than random policies when it comes to balance a pole in a moving cart. Also, we can conclude that the Boxes agent is significantly different from a random policy.
+
+## Project Setup
 
 Create a virtual environment using virtualenv (make sure to use a python version >= 3.10) and run the following commands after activating your virtual env.
 
