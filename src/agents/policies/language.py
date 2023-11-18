@@ -101,7 +101,7 @@ class LLM(Policy):
         except:
             log.info(response)
             log.error("unable to parse a decision from agent")
-            decision = np.random.randint(0,1) # some help to the llm
+            decision = np.random.binomial(1, 0.5) # some help to the llm
 
         self.__decisionsHistory.append(userprompt[0])
         self.__decisionsHistory.append(response)

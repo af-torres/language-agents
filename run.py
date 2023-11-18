@@ -6,7 +6,9 @@ import numpy as np
 from agents.agent import CartPoleAgent, Policy
 from agents.environment import CartPole, Reward
 from agents.policies.boxes import Boxes
-from agents.policies.language import LLM, Chat, ChatDumpToFile, RateLimit
+from agents.policies.language import LLM, Chat, ChatDumpToFile, \
+    RateLimit, Backend as LLMBackend
+from agents.policies.random import Random
 from dotenv import dotenv_values
 from typing import List
 from openai import OpenAI
@@ -86,7 +88,7 @@ def loadPolicy(args) -> Policy:
             play(args.train_episodes, policy)
         
         return policy
-    else:
+    elif args.backend in LLMBackend.__args__:
         apiKey = config.get("OPEN_AI_API_KEY", None)
         if apiKey == None:
             raise Exception("OPEN_AI_API_KEY missing in .env file")
@@ -109,6 +111,8 @@ def loadPolicy(args) -> Policy:
         policy = RateLimit(policy, args.rqm)
         
         return policy
+    else:
+        return Random()
     
 
 def parseArgs() -> argparse.Namespace:
@@ -122,7 +126,7 @@ def parseArgs() -> argparse.Namespace:
     args.add_argument(
         "--backend",
         type=str,
-        choices=["gpt-4", "gpt-3.5-turbo", "boxes"],
+        choices=["gpt-4", "gpt-3.5-turbo", "boxes", "random"],
         default="boxes"
     )
     args.add_argument(
