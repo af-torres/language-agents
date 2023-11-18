@@ -49,12 +49,13 @@ def eval(results: List[Reward]) -> None:
     min = np.min(r)
     up500 = np.sum(r >= 500)
 
-    log.info(f"A total of {len(r)} episodes were played during evaluation.")
-    log.info(f"""The policy under evaluation has:
-+ A mean episode duration of {mean} with a standard deviation of {sd}.
-+ The longest episode was {max}.
-+ The shortest was {min}.
-+ Total episodes with a duration gte 500 is {up500}.""")
+    log.info(f"""The policy under evaluation results:
++ Mean: {mean}.
++ Standard deviation: {sd}.
++ Max: {max}.
++ Min: {min}.
++ Total episodes with a duration gte 500 is {up500}.
++ Sample size: {len(r)}.""")
 
 
 def play(episodes: int, policy: Policy, renderMode: str | None = None) -> List[Reward]:
