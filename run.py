@@ -60,7 +60,7 @@ def play(episodes: int, policy: Policy, renderMode: str | None = None) -> List[R
     env = CartPole(renderMode)
 
     episodesReward = []
-    for _ in range(episodes):
+    for e in range(episodes):
         total = 0 
         while not env.terminated():
             env, reward = agent.action(env)
@@ -68,6 +68,8 @@ def play(episodes: int, policy: Policy, renderMode: str | None = None) -> List[R
 
             if total % 100 == 0:
                 log.info(f"total reward for current episode has reached {total}")
+
+        log.info(f"episode {e} terminated with a total reward of {total}")
 
         env.reset()
         agent.terminate()
@@ -99,7 +101,11 @@ def loadPolicy(args) -> Policy:
         else:
             chat = Chat()
 
-        policy = LLM(chat)
+        promptFile = open(args.prompt_file, "r")
+        prompt = promptFile.read()
+        promptFile.close()
+
+        policy = LLM(chat, prompt)
         policy = RateLimit(policy, args.rqm)
         
         return policy
@@ -128,12 +134,17 @@ def parseArgs() -> argparse.Namespace:
     args.add_argument(
         "--save_chat",
         type=bool,
-        default=True
+        default=False
     )
     args.add_argument(
         "--chat_file",
         type=str,
         default=os.path.join("data", "chat_history.txt")
+    )
+    args.add_argument(
+        "--prompt_file",
+        type=str,
+        default=os.path.join("data", "prompt-1.txt")
     )
     args.add_argument(
         "--train",

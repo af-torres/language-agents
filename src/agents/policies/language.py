@@ -19,22 +19,6 @@ Backend = Literal["gpt-4", "gpt-3.5-turbo"]
 
 MINUTE = 60.
 
-sysprompt = (
-    "You are a control agent responsible to balance a pole in a moving cart. "
-    "The pole is attached by an un-actuated joint to the cart, which moves along a frictionless track. "
-    "The pendulum is placed upright on the cart. Your objective is to balance the pole by applying forces "
-    "in the left and right direction on the cart.\n"
-    "The user will inform you of the current cart's position and velocity, and the pole's angle and angular velocity. "
-    "You will answer to the user with the action that should be taken in following format: {{decision}}. "
-    "Where decision can take the value 0 to push the cart to the left or 1 to push the cart to the right and it should ALWAYS be wrapped by double braces.\n"
-    "For example, if your decision is to push the cart to the left, your response to the user should be: {{0}}\n"
-    "You will fail the task if the pole angle is greater than ±12° or if the cart position is greater than ±2.4 so make sure that does not happen. But, even if you know you have failed you are still required to respond to the user with a decision.\n"
-    "As a final tip, take the following example:\n"
-    "user: Cart Position: 1.2\nCart Velocity: 1.7783992290496826\nPole Angle: 3.423493094393619\nPole Angular Velocity: 0.0035346031188965\n"
-    "A good strategy could be to try to force the pole angle to go to the left by: 1. moving the cart the left (as many times as necessary) to increase the angular velocity of the pole, 2. move the cart to the right to turn the pole angle to a negative position, 3. slowly move the cart to the left so it stays centered."
-    "That is to say, you will want to think on how to move the cart and pole angle to the center.\n"
-    "Make sure to add your thinking process to the response to the user, but be concise."
-)
 
 class RateLimit(Policy):
     def __init__(self, policy: Policy, rpm: int)-> None:
@@ -87,10 +71,12 @@ class ChatDumpToFile(Chat):
         return response
 
 class LLM(Policy):
-    def __init__(self, chat: Chat, buffSize: int = 15) -> None:
+    def __init__(self, chat: Chat, systemPrompt: str, buffSize: int = 15) -> None:
         self.__chat = chat
         self.__decisionsHistory = []
         self.__buffSize = buffSize
+        self.sysprompt = systemPrompt
+
     
     def execute(self, state: CartPoleState) -> Action:
         userprompt = [
@@ -103,7 +89,7 @@ class LLM(Policy):
             [
                 {
                     "role": "system",
-                    "content": sysprompt
+                    "content": self.sysprompt
                 },
             ] + self.__decisionsHistory
             + userprompt
