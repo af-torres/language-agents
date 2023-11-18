@@ -1,8 +1,12 @@
-INFO:__main__:Training demons to make decisions...
-INFO:__main__:Starting policy evaluation...
 INFO:__main__:A total of 100 episodes were played during evaluation.
 INFO:__main__:The policy under evaluation has:
-+ A mean episode duration of 163.77 with a standard deviation of 105.66814609900187.
-+ The longest episode was 437.0.
++ A mean episode duration of 176.68 with a standard deviation of 111.04709631503202.
++ The longest episode was 500.0.
 + The shortest was 11.0.
++ Total episodes with a duration gte 500 is 1.
+INFO:__main__:A total of 100 episodes were played during evaluation.
+INFO:__main__:The policy under evaluation has:
++ A mean episode duration of 4.866795190242914 with a standard deviation of 0.8987026953290442.
++ The longest episode was 6.214608098422191.
++ The shortest was 2.3978952727983707.
 + Total episodes with a duration gte 500 is 0.
