@@ -55,7 +55,7 @@ class CartPole(Environment):
         
         step = self.__env.step(a)
         self.__state = CartPoleState(step[0])
-        self.__terminated = step[2]
+        self.__terminated = step[2] or step[3]
         
         return [self, step[1]] 
     

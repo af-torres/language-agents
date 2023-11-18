@@ -1,23 +1,42 @@
 import argparse
 import logging
+import os
 import numpy as np
 
 from agents.agent import CartPoleAgent, Policy
 from agents.environment import CartPole, Reward
 from agents.policies.boxes import Boxes
+from agents.policies.language import LLM, Chat, ChatDumpToFile, RateLimit
+from dotenv import dotenv_values
 from typing import List
+from openai import OpenAI
+
+
+config = dotenv_values(".env")
 
 
 log = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=int(config.get("LOGGING_LEVEL", logging.INFO)))
 
 
-def run(args):
-    policy = loadPolicy(args)
-    
-    log.info("Starting policy evaluation...")
-    results = play(args.eval_episodes, policy, renderMode=args.render_mode)
-    eval(results)
+f = None # IO to dump data to. Used to save LLM messages.
+
+def run(args) -> None:
+    try:
+        policy = loadPolicy(args)
+
+        log.info("Starting policy evaluation...")
+        results = play(args.eval_episodes, policy, renderMode=args.render_mode)
+
+        eval(results)
+        eval(np.log(results)) # hack to perform better t-tests
+    except Exception as e:
+        log.error(e, exc_info=True)
+    finally:
+        # clean up
+        global f
+        if not f is None:
+            f.close()
 
 
 def eval(results: List[Reward]) -> None:
@@ -47,6 +66,9 @@ def play(episodes: int, policy: Policy, renderMode: str | None = None) -> List[R
             env, reward = agent.action(env)
             total += reward
 
+            if total % 100 == 0:
+                log.info(f"total reward for current episode has reached {total}")
+
         env.reset()
         agent.terminate()
         episodesReward.append(total)
@@ -54,7 +76,7 @@ def play(episodes: int, policy: Policy, renderMode: str | None = None) -> List[R
     return episodesReward  
 
 
-def loadPolicy(args):
+def loadPolicy(args) -> Policy:
     if args.backend == "boxes":
         policy = Boxes()
         if args.train:
@@ -62,8 +84,28 @@ def loadPolicy(args):
             play(args.train_episodes, policy)
         
         return policy
+    else:
+        apiKey = config.get("OPEN_AI_API_KEY", None)
+        if apiKey == None:
+            raise Exception("OPEN_AI_API_KEY missing in .env file")
+        
+        client = OpenAI(api_key=apiKey)
+        
+        chat = None
+        if args.save_chat:
+            global f
+            f = open(args.chat_file, "w")
+            chat = ChatDumpToFile(client, args.backend, f)
+        else:
+            chat = Chat()
 
-def parseArgs():
+        policy = LLM(chat)
+        policy = RateLimit(policy, args.rqm)
+        
+        return policy
+    
+
+def parseArgs() -> argparse.Namespace:
     args = argparse.ArgumentParser()
 
     args.add_argument(
@@ -78,9 +120,20 @@ def parseArgs():
         default="boxes"
     )
     args.add_argument(
-        "--temperature",
-        type=float,
-        default=0.7
+        "--rqm",
+        type=int,
+        default=500,
+        help="limit to the requests per minute to open ai api"
+    )
+    args.add_argument(
+        "--save_chat",
+        type=bool,
+        default=True
+    )
+    args.add_argument(
+        "--chat_file",
+        type=str,
+        default=os.path.join("data", "chat_history.txt")
     )
     args.add_argument(
         "--train",

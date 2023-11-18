@@ -10,7 +10,8 @@
             "request": "launch",
             "program": "run.py",
             "console": "integratedTerminal",
-            "justMyCode": true
+            "justMyCode": true,
+            "args": ["--render_mode", "human", "--backend", "gpt-3.5-turbo"]
         }
     ]
 }

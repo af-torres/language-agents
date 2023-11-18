@@ -35,7 +35,6 @@ class CartPoleAgent(Agent):
     def action(self, environment: CartPole) -> Transition:
         currState = environment.state()
         action = self.__policy.execute(currState)
-        
         return environment.transition(action)
     
     def terminate(self) -> None:
