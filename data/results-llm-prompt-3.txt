@@ -1,0 +1,12 @@
+INFO:__main__:A total of 100 episodes were played during evaluation.
+INFO:__main__:The policy under evaluation has:
++ A mean episode duration of 22.54 with a standard deviation of 16.768076812801162.
++ The longest episode was 109.0.
++ The shortest was 8.0.
++ Total episodes with a duration gte 500 is 0.
+INFO:__main__:A total of 100 episodes were played during evaluation.
+INFO:__main__:The policy under evaluation has:
++ A mean episode duration of 2.895682578907467 with a standard deviation of 0.636933386411483.
++ The longest episode was 4.6913478822291435.
++ The shortest was 2.0794415416798357.
++ Total episodes with a duration gte 500 is 0.
